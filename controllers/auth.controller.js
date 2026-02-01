@@ -58,9 +58,13 @@ async function loginUser(req, res) {
         .json({ message: "Email or password are not correct" });
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { name: user.name, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "12h",
+      },
+    );
 
     return res.status(200).json({ message: "Login successfull", token });
   } catch (error) {
@@ -68,4 +72,14 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { signupUser, loginUser };
+async function getUserDetails(req, res) {
+  try {
+    return res
+      .status(200)
+      .json({ message: "Profile accessed", user: req.user });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports = { signupUser, loginUser, getUserDetails };
