@@ -11,13 +11,13 @@ const { authMiddleware } = require("./middlewares/auth.middleware.js");
 const app = express();
 initializeDatabase();
 
+const corsOptions = {
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(
-  cors({
-    origin: "*",
-    // credentials: true,
-  }),
-);
 
 app.post("/auth/signup", signupUser);
 app.post("/auth/login", loginUser);
