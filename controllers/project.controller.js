@@ -23,19 +23,22 @@ const addProject = async (req, res) => {
       },
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    console.log(error.message);
+
+    // handle duplicate project name error
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "Project with this name already exists",
+      });
+    }
+
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const getProjects = async (req, res) => {
   try {
     const projects = await fetchProjects();
-
-    if (projects.length === 0) {
-      return res.status(404).json({ error: "No project found" });
-    }
 
     const formattedProjects = projects.map((project) => ({
       id: project.id,
@@ -50,9 +53,8 @@ const getProjects = async (req, res) => {
       projects: formattedProjects,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

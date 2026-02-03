@@ -11,6 +11,7 @@ const {
   addProject,
   getProjects,
 } = require("./controllers/project.controller.js");
+const { addTeam, getTeams } = require("./controllers/team.controller.js");
 
 const app = express();
 initializeDatabase();
@@ -27,8 +28,11 @@ app.post("/auth/signup", signupUser);
 app.post("/auth/login", loginUser);
 app.get("/auth/me", authMiddleware, getUserDetails);
 
-app.post("/projects", addProject);
-app.get("/projects", getProjects);
+app.post("/projects", authMiddleware, addProject);
+app.get("/projects", authMiddleware, getProjects);
+
+app.post("/teams", authMiddleware, addTeam);
+app.get("/teams", authMiddleware, getTeams);
 
 app.get("/", (req, res) => {
   res.send({ status: "Ok", message: "TeamTrack backend is running." });
