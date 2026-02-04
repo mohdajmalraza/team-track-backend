@@ -15,7 +15,7 @@ const addProject = async (req, res) => {
     return res.status(201).json({
       message: "Project created successfully",
       project: {
-        id: project.id,
+        id: project._id,
         name: project.name,
         description: project.description,
         status: project.status,
@@ -40,8 +40,15 @@ const getProjects = async (req, res) => {
   try {
     const projects = await fetchProjects();
 
+    if (!projects.length) {
+      return res.status(200).json({
+        message: "No projects found",
+        projects: [],
+      });
+    }
+
     const formattedProjects = projects.map((project) => ({
-      id: project.id,
+      id: project._id,
       name: project.name,
       description: project.description,
       status: project.status,

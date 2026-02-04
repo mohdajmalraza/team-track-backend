@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
+const Project = require("../models/project.model.js");
 
-function validateObjectId(id) {
+const ALLOWED_STATUSES = ["To Do", "In Progress", "Completed", "Blocked"];
+
+function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
+}
+
+async function isProjectValid(id) {
+  return await Project.findById(id);
 }
 
 function validateTaskData(body) {
@@ -15,11 +22,11 @@ function validateTaskData(body) {
     return "Name is required and must be a string";
   }
 
-  if (!project || !validateObjectId(project)) {
+  if (!project || !isValidObjectId(project)) {
     return "Project ID is required and must be valid";
   }
 
-  if (!team || !validateObjectId(team)) {
+  if (!team || !isValidObjectId(team)) {
     return "Team ID is required and must be valid";
   }
 
@@ -28,7 +35,7 @@ function validateTaskData(body) {
   }
 
   for (const ownerId of owners) {
-    if (!validateObjectId(ownerId)) {
+    if (!isValidObjectId(ownerId)) {
       return "Each owner ID must be valid";
     }
   }
@@ -59,4 +66,39 @@ function validateTaskData(body) {
   return null;
 }
 
-module.exports = { validateTaskData };
+function validateTaskQuery(query) {
+  if (!query || typeof query !== "object") {
+    return "Invalid query parameters";
+  }
+
+  const { team, owner, tags, project, status } = query;
+
+  if (team && !isValidObjectId(team)) {
+    return "Team must be a valid ID";
+  }
+
+  if (owner && !isValidObjectId(owner)) {
+    return "Owner must be a valid ID";
+  }
+
+  if (project && !isValidObjectId(project)) {
+    return "Project must be a valid ID";
+  }
+
+  const existProject = isProjectValid(project);
+  if (!existProject) {
+    return "Project not found";
+  }
+
+  if (status && !ALLOWED_STATUSES.includes(status)) {
+    return `Status must be one of ${ALLOWED_STATUSES.join(", ")}`;
+  }
+
+  if (tags && typeof tags !== "string") {
+    return "Tags must be a comma-separated string";
+  }
+
+  return null;
+}
+
+module.exports = { validateTaskData, validateTaskQuery };
