@@ -39,7 +39,11 @@ const addTask = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error.message);
+    if (error.statusCode) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+
+    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
