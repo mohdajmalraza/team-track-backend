@@ -13,6 +13,7 @@ const {
 } = require("./controllers/project.controller.js");
 const { addTeam, getTeams } = require("./controllers/team.controller.js");
 const { addTask, getTasks } = require("./controllers/task.controller.js");
+const { getUsers } = require("./controllers/user.controller.js");
 
 const app = express();
 initializeDatabase();
@@ -28,6 +29,8 @@ app.use(express.json());
 app.post("/auth/signup", signupUser);
 app.post("/auth/login", loginUser);
 app.get("/auth/me", authMiddleware, getUserDetails);
+
+app.get("/users", authMiddleware, getUsers);
 
 app.post("/projects", authMiddleware, addProject);
 app.get("/projects", authMiddleware, getProjects);

@@ -62,7 +62,7 @@ async function loginUser(req, res) {
       { name: user.name, email: user.email },
       process.env.JWT_SECRET,
       {
-        expiresIn: "12h",
+        expiresIn: "24h",
       },
     );
 
