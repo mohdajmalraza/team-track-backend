@@ -1,3 +1,6 @@
+const ALLOWED_STATUS_FIELDS = ["In Progress", "Completed"];
+const ALLOWED_SORT_FIELDS = ["createdAt", "name", "status"];
+
 function validateProjectData(body) {
   const { name, description, status } = body;
 
@@ -16,4 +19,29 @@ function validateProjectData(body) {
   return null;
 }
 
-module.exports = { validateProjectData };
+function validateProjectQuery(query) {
+  const { status, sortBy, order, limit } = query;
+
+  if (status && !ALLOWED_STATUS_FIELDS.includes(status)) {
+    return `Invalid status field. Allowed: ${ALLOWED_STATUS_FIELDS.join(", ")}`;
+  }
+
+  if (sortBy && !ALLOWED_SORT_FIELDS.includes(sortBy)) {
+    return `Invalid sortBy field. Allowed: ${ALLOWED_SORT_FIELDS.join(", ")}`;
+  }
+
+  if (order && !["asc", "desc"].includes(order.toLowerCase())) {
+    return `Order must be 'asc' or 'desc'`;
+  }
+
+  if (limit) {
+    let numLimit = Number(limit);
+    if (!Number.isInteger(numLimit) || numLimit <= 0 || numLimit > 100) {
+      return "Limit must be a positive integer between 1 and 100";
+    }
+  }
+
+  return null;
+}
+
+module.exports = { validateProjectData, validateProjectQuery };

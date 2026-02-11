@@ -23,6 +23,10 @@ const taskSchema = new mongoose.Schema(
     ],
     tags: [{ type: String }], // Array of tags
     timeToComplete: { type: Number, required: true }, // Number of days to complete the task
+    dueDate: {
+      type: Date,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["To Do", "In Progress", "Completed", "Blocked"], // Enum for task status

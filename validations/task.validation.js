@@ -16,7 +16,8 @@ function validateTaskData(body) {
     return "Request body is required";
   }
 
-  const { name, project, team, owners, tags, timeToComplete, status } = body;
+  const { name, project, team, owners, tags, timeToComplete, status, dueDate } =
+    body;
 
   if (!name || typeof name !== "string") {
     return "Name is required and must be a string";
@@ -28,6 +29,15 @@ function validateTaskData(body) {
 
   if (!team || !isValidObjectId(team)) {
     return "Team ID is required and must be valid";
+  }
+
+  if (!dueDate || typeof dueDate !== "string") {
+    return "Due date is required and must be a string";
+  }
+
+  const parsedDate = new Date(dueDate);
+  if (isNaN(parsedDate.getTime())) {
+    return "Due date must be a valid date";
   }
 
   if (!Array.isArray(owners) || owners.length === 0) {

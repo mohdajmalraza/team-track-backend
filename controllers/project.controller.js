@@ -1,5 +1,8 @@
 const { createProject, fetchProjects } = require("../services/project.service");
-const { validateProjectData } = require("../validations/project.validation");
+const {
+  validateProjectData,
+  validateProjectQuery,
+} = require("../validations/project.validation");
 
 const addProject = async (req, res) => {
   const validationError = validateProjectData(req.body);
@@ -37,8 +40,15 @@ const addProject = async (req, res) => {
 };
 
 const getProjects = async (req, res) => {
+  const validationError = validateProjectQuery(req.query);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
   try {
-    const projects = await fetchProjects();
+    const { status, sortBy, order, limit } = req.query;
+
+    const projects = await fetchProjects(req.query);
 
     if (!projects.length) {
       return res.status(200).json({
@@ -60,7 +70,7 @@ const getProjects = async (req, res) => {
       projects: formattedProjects,
     });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

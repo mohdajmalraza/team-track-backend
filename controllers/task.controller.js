@@ -11,8 +11,18 @@ const addTask = async (req, res) => {
   }
 
   try {
-    const { name, project, team, owners, tags, timeToComplete, status } =
-      req.body;
+    const {
+      name,
+      project,
+      team,
+      owners,
+      tags,
+      timeToComplete,
+      dueDate,
+      status,
+    } = req.body;
+
+    const parsedDueDate = new Date(dueDate);
 
     const task = await createTask({
       name,
@@ -22,6 +32,7 @@ const addTask = async (req, res) => {
       tags,
       timeToComplete,
       status,
+      dueDate: parsedDueDate,
     });
 
     return res.status(201).json({
@@ -29,9 +40,16 @@ const addTask = async (req, res) => {
       task: {
         id: task._id,
         name: task.name,
-        project: task.project,
-        team: task.team,
-        owners: task.owners,
+        project: task.project
+          ? { id: task.project._id, name: task.project.name }
+          : null,
+        team: task.team ? { id: task.team._id, name: task.team.name } : null,
+        owners: task.owners?.map(({ _id, name, email }) => ({
+          id: _id,
+          name,
+          email,
+        })),
+        dueDate: task.dueDate,
         tags: task.tags,
         timeToComplete: task.timeToComplete,
         status: task.status,
@@ -74,6 +92,7 @@ const getTasks = async (req, res) => {
         tags,
         timeToComplete,
         status,
+        dueDate,
         updatedAt,
       }) => ({
         id: _id,
@@ -86,6 +105,7 @@ const getTasks = async (req, res) => {
           email,
         })),
         tags,
+        dueDate,
         timeToComplete,
         status,
         updatedAt,

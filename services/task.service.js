@@ -24,7 +24,15 @@ async function createTask(data) {
     throw { statusCode: 404, message: "One or more owners not found" };
   }
 
-  return await Task.create(data);
+  const task = await Task.create(data);
+
+  await task.populate([
+    { path: "project", select: "name" },
+    { path: "team", select: "name" },
+    { path: "owners", select: "name email" },
+  ]);
+
+  return task;
 }
 
 async function fetchTasks(query) {
