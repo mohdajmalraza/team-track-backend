@@ -20,10 +20,14 @@ function validateProjectData(body) {
 }
 
 function validateProjectQuery(query) {
-  const { status, sortBy, order, limit } = query;
+  const { status, search, sortBy, order, limit } = query;
 
   if (status && !ALLOWED_STATUS_FIELDS.includes(status)) {
     return `Invalid status field. Allowed: ${ALLOWED_STATUS_FIELDS.join(", ")}`;
+  }
+
+  if (search && typeof search !== "string") {
+    return "Search must be a string";
   }
 
   if (sortBy && !ALLOWED_SORT_FIELDS.includes(sortBy)) {
@@ -44,4 +48,7 @@ function validateProjectQuery(query) {
   return null;
 }
 
-module.exports = { validateProjectData, validateProjectQuery };
+module.exports = {
+  validateProjectData,
+  validateProjectQuery,
+};

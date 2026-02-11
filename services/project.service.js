@@ -1,14 +1,20 @@
 const Project = require("../models/project.model.js");
+const { escapeRegex } = require("../utils/utility.js");
 
 async function createProject(data) {
   return await Project.create(data);
 }
 
 async function fetchProjects(query = {}) {
-  const { status, sortBy, order, limit } = query;
+  const { status, search, sortBy, order = "desc", limit } = query;
   const filters = {};
 
   if (status) filters.status = status;
+
+  if (search) {
+    const escapedSearch = escapeRegex(search);
+    filters.name = { $regex: escapedSearch, $options: "i" };
+  }
 
   let projects = Project.find(filters);
 

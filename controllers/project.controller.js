@@ -2,6 +2,7 @@ const { createProject, fetchProjects } = require("../services/project.service");
 const {
   validateProjectData,
   validateProjectQuery,
+  validateSearchQuery,
 } = require("../validations/project.validation");
 
 const addProject = async (req, res) => {
@@ -46,16 +47,14 @@ const getProjects = async (req, res) => {
   }
 
   try {
-    const { status, sortBy, order, limit } = req.query;
-
     const projects = await fetchProjects(req.query);
 
-    if (!projects.length) {
-      return res.status(200).json({
-        message: "No projects found",
-        projects: [],
-      });
-    }
+    // if (!projects.length) {
+    //   return res.status(200).json({
+    //     message: "No projects found",
+    //     projects: [],
+    //   });
+    // }
 
     const formattedProjects = projects.map((project) => ({
       id: project._id,
