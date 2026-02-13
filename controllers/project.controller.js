@@ -1,8 +1,12 @@
-const { createProject, fetchProjects } = require("../services/project.service");
+const {
+  createProject,
+  fetchProjects,
+  fetchProjectById,
+} = require("../services/project.service");
 const {
   validateProjectData,
   validateProjectQuery,
-  validateSearchQuery,
+  validateProjectById,
 } = require("../validations/project.validation");
 
 const addProject = async (req, res) => {
@@ -49,12 +53,12 @@ const getProjects = async (req, res) => {
   try {
     const projects = await fetchProjects(req.query);
 
-    // if (!projects.length) {
-    //   return res.status(200).json({
-    //     message: "No projects found",
-    //     projects: [],
-    //   });
-    // }
+    if (!projects.length) {
+      return res.status(200).json({
+        message: "No projects found",
+        projects: [],
+      });
+    }
 
     const formattedProjects = projects.map((project) => ({
       id: project._id,
@@ -74,4 +78,35 @@ const getProjects = async (req, res) => {
   }
 };
 
-module.exports = { addProject, getProjects };
+const getProjectById = async (req, res) => {
+  const validationError = validateProjectById(req.params);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { id } = req.params;
+
+    const project = await fetchProjectById(id);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    return res.status(200).json({
+      message: "Project found successfully",
+      project: {
+        id: project._id,
+        name: project.name,
+        description: project.description,
+        status: project.status,
+        createdAt: project.createdAt,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = { addProject, getProjects, getProjectById };

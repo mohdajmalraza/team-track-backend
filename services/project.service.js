@@ -30,4 +30,8 @@ async function fetchProjects(query = {}) {
   return await projects;
 }
 
-module.exports = { createProject, fetchProjects };
+async function fetchProjectById(id) {
+  return await Project.findById(id);
+}
+
+module.exports = { createProject, fetchProjects, fetchProjectById };

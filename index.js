@@ -10,6 +10,7 @@ const { authMiddleware } = require("./middlewares/auth.middleware.js");
 const {
   addProject,
   getProjects,
+  getProjectById,
 } = require("./controllers/project.controller.js");
 const { addTeam, getTeams } = require("./controllers/team.controller.js");
 const { addTask, getTasks } = require("./controllers/task.controller.js");
@@ -33,7 +34,8 @@ app.get("/auth/me", authMiddleware, getUserDetails);
 app.get("/users", authMiddleware, getUsers);
 
 app.post("/projects", authMiddleware, addProject);
-app.get("/projects", getProjects);
+app.get("/projects", authMiddleware, getProjects);
+app.get("/api/projects/:id", authMiddleware, getProjectById);
 
 app.post("/teams", authMiddleware, addTeam);
 app.get("/teams", authMiddleware, getTeams);

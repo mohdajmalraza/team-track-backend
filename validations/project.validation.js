@@ -1,5 +1,11 @@
+const mongoose = require("mongoose");
+
 const ALLOWED_STATUS_FIELDS = ["In Progress", "Completed"];
 const ALLOWED_SORT_FIELDS = ["createdAt", "name", "status"];
+
+function isValidObjectId(id) {
+  return mongoose.Types.ObjectId.isValid(id);
+}
 
 function validateProjectData(body) {
   const { name, description, status } = body;
@@ -48,7 +54,18 @@ function validateProjectQuery(query) {
   return null;
 }
 
+function validateProjectById(params) {
+  const { id } = params;
+
+  if (!id || !isValidObjectId(id)) {
+    return "Project Id is required and must be a valid ObjectId";
+  }
+
+  return null;
+}
+
 module.exports = {
   validateProjectData,
   validateProjectQuery,
+  validateProjectById,
 };
