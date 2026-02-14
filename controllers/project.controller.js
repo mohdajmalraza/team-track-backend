@@ -1,8 +1,7 @@
 const {
-  createProject,
-  fetchProjects,
-  fetchProjectById,
-  fetchProjectTasks,
+  insertProject,
+  findProjects,
+  findProjectById,
 } = require("../services/project.service");
 const {
   validateProjectData,
@@ -10,7 +9,7 @@ const {
   validateProjectById,
 } = require("../validations/project.validation");
 
-const addProject = async (req, res) => {
+const createProject = async (req, res) => {
   const validationError = validateProjectData(req.body);
   if (validationError) {
     return res.status(400).json({ error: validationError });
@@ -19,7 +18,7 @@ const addProject = async (req, res) => {
   try {
     const { name, description, status } = req.body;
 
-    const project = await createProject({ name, description, status });
+    const project = await insertProject({ name, description, status });
 
     return res.status(201).json({
       message: "Project created successfully",
@@ -52,7 +51,7 @@ const getProjects = async (req, res) => {
   }
 
   try {
-    const projects = await fetchProjects(req.query);
+    const projects = await findProjects(req.query);
 
     if (!projects.length) {
       return res.status(200).json({
@@ -88,7 +87,7 @@ const getProjectById = async (req, res) => {
   try {
     const { projectId } = req.params;
 
-    const project = await fetchProjectById(projectId);
+    const project = await findProjectById(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
@@ -110,60 +109,4 @@ const getProjectById = async (req, res) => {
   }
 };
 
-const getProjectTasks = async (req, res) => {
-  const validationError = validateProjectById(req.params);
-  if (validationError) {
-    return res.status(400).json({ error: validationError });
-  }
-
-  try {
-    const { projectId } = req.params;
-
-    const tasks = await fetchProjectTasks(projectId);
-
-    if (!tasks.length) {
-      return res
-        .status(200)
-        .json({ message: "Tasks fetched successfully", tasks: [] });
-    }
-
-    const formattedTasks = tasks.map(
-      ({
-        _id,
-        name,
-        project,
-        team,
-        owners,
-        tags,
-        timeToComplete,
-        status,
-        dueDate,
-        updatedAt,
-      }) => ({
-        id: _id,
-        name,
-        project: project ? { id: project._id, name: project.name } : null,
-        team: team ? { id: team._id, name: team.name } : null,
-        owners: owners?.map(({ _id, name, email }) => ({
-          id: _id,
-          name,
-          email,
-        })),
-        tags,
-        dueDate,
-        timeToComplete,
-        status,
-        updatedAt,
-      }),
-    );
-
-    return res
-      .status(200)
-      .json({ message: "Tasks fetched successfully", tasks: formattedTasks });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-module.exports = { addProject, getProjects, getProjectById, getProjectTasks };
+module.exports = { createProject, getProjects, getProjectById };

@@ -3,7 +3,7 @@ const Task = require("../models/task.model.js");
 const Team = require("../models/team.model.js");
 const User = require("../models/user.model.js");
 
-async function createTask(data) {
+async function insertTask(data) {
   const { project, team, owners } = data;
 
   const [projectExists, teamExists, ownersExist] = await Promise.all([
@@ -35,7 +35,7 @@ async function createTask(data) {
   return task;
 }
 
-async function fetchTasks(query) {
+async function findTasks(query) {
   const filters = {};
   const { team, owner, tags, project, status } = query;
 
@@ -56,4 +56,4 @@ async function fetchTasks(query) {
     .lean();
 }
 
-module.exports = { createTask, fetchTasks };
+module.exports = { insertTask, findTasks };

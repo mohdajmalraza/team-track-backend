@@ -1,8 +1,8 @@
-const { fetchUsers } = require("../services/user.service");
+const { findUsers } = require("../services/user.service");
 
 const getUsers = async (req, res) => {
   try {
-    const users = await fetchUsers();
+    const users = await findUsers();
 
     if (!users.length) {
       return res

@@ -1,10 +1,10 @@
-const { createTask, fetchTasks } = require("../services/task.service");
+const { insertTask, findTasks } = require("../services/task.service");
 const {
   validateTaskData,
   validateTaskQuery,
 } = require("../validations/task.validation");
 
-const addTask = async (req, res) => {
+const createTask = async (req, res) => {
   const validationError = validateTaskData(req.body);
   if (validationError) {
     return res.status(400).json({ error: validationError });
@@ -24,7 +24,7 @@ const addTask = async (req, res) => {
 
     const parsedDueDate = new Date(dueDate);
 
-    const task = await createTask({
+    const task = await insertTask({
       name,
       project,
       team,
@@ -73,7 +73,7 @@ const getTasks = async (req, res) => {
   }
 
   try {
-    const tasks = await fetchTasks(req.query);
+    const tasks = await findTasks(req.query);
 
     if (!tasks.length) {
       return res.status(200).json({
@@ -121,4 +121,4 @@ const getTasks = async (req, res) => {
   }
 };
 
-module.exports = { addTask, getTasks };
+module.exports = { createTask, getTasks };

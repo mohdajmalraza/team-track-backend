@@ -1,7 +1,7 @@
 const User = require("../models/user.model.js");
 
-async function fetchUsers() {
+async function findUsers() {
   return await User.find();
 }
 
-module.exports = { fetchUsers };
+module.exports = { findUsers };

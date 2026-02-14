@@ -1,12 +1,11 @@
 const Project = require("../models/project.model.js");
-const Task = require("../models/task.model.js");
 const { escapeRegex } = require("../utils/utility.js");
 
-async function createProject(data) {
+async function insertProject(data) {
   return await Project.create(data);
 }
 
-async function fetchProjects(query = {}) {
+async function findProjects(query = {}) {
   const { status, search, sortBy, order = "desc", limit } = query;
   const filters = {};
 
@@ -31,17 +30,12 @@ async function fetchProjects(query = {}) {
   return await projects;
 }
 
-async function fetchProjectById(id) {
+async function findProjectById(id) {
   return await Project.findById(id);
 }
 
-async function fetchProjectTasks(id) {
-  return await Task.find({ project: id });
-}
-
 module.exports = {
-  createProject,
-  fetchProjects,
-  fetchProjectById,
-  fetchProjectTasks,
+  insertProject,
+  findProjects,
+  findProjectById,
 };

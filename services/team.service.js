@@ -1,11 +1,11 @@
 const Team = require("../models/team.model.js");
 
-const createTeam = async (data) => {
+const insertTeam = async (data) => {
   return await Team.create(data);
 };
 
-const fetchTeams = async () => {
+const findTeams = async () => {
   return await Team.find();
 };
 
-module.exports = { createTeam, fetchTeams };
+module.exports = { insertTeam, findTeams };

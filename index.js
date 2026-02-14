@@ -8,13 +8,12 @@ const {
 } = require("./controllers/auth.controller.js");
 const { authMiddleware } = require("./middlewares/auth.middleware.js");
 const {
-  addProject,
+  createProject,
   getProjects,
   getProjectById,
-  getProjectTasks,
 } = require("./controllers/project.controller.js");
-const { addTeam, getTeams } = require("./controllers/team.controller.js");
-const { addTask, getTasks } = require("./controllers/task.controller.js");
+const { createTeam, getTeams } = require("./controllers/team.controller.js");
+const { createTask, getTasks } = require("./controllers/task.controller.js");
 const { getUsers } = require("./controllers/user.controller.js");
 
 const app = express();
@@ -22,8 +21,7 @@ initializeDatabase();
 
 app.use(
   cors({
-    // origin: "https://team-track-project.vercel.app",
-    origin: "http://localhost:5173",
+    origin: "https://team-track-project.vercel.app",
     credentials: true,
   }),
 );
@@ -35,15 +33,14 @@ app.get("/api/auth/me", authMiddleware, getUserDetails);
 
 app.get("/api/users", authMiddleware, getUsers);
 
-app.post("/api/projects", authMiddleware, addProject);
+app.post("/api/projects", authMiddleware, createProject);
 app.get("/api/projects", authMiddleware, getProjects);
-app.get("/api/projects/:projectId/tasks", authMiddleware, getProjectTasks);
 app.get("/api/projects/:projectId", authMiddleware, getProjectById);
 
-app.post("/api/teams", authMiddleware, addTeam);
+app.post("/api/teams", authMiddleware, createTeam);
 app.get("/api/teams", authMiddleware, getTeams);
 
-app.post("/api/tasks", authMiddleware, addTask);
+app.post("/api/tasks", authMiddleware, createTask);
 app.get("/api/tasks", authMiddleware, getTasks);
 
 app.get("/", (req, res) => {

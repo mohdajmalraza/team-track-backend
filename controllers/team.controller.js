@@ -1,7 +1,7 @@
-const { createTeam, fetchTeams } = require("../services/team.service");
+const { insertTeam, findTeams } = require("../services/team.service");
 const { validateTeamData } = require("../validations/team.validation.js");
 
-const addTeam = async (req, res) => {
+const createTeam = async (req, res) => {
   const validationError = validateTeamData(req.body);
   if (validationError) {
     return res.status(400).json({ error: validationError });
@@ -10,7 +10,7 @@ const addTeam = async (req, res) => {
   try {
     const { name, description } = req.body;
 
-    const team = await createTeam({ name, description });
+    const team = await insertTeam({ name, description });
 
     return res.status(201).json({
       message: "Team created successfully",
@@ -36,7 +36,7 @@ const addTeam = async (req, res) => {
 
 const getTeams = async (req, res) => {
   try {
-    const teams = await fetchTeams();
+    const teams = await findTeams();
 
     if (!teams.length) {
       return res.status(200).json({
@@ -60,4 +60,4 @@ const getTeams = async (req, res) => {
   }
 };
 
-module.exports = { addTeam, getTeams };
+module.exports = { createTeam, getTeams };
