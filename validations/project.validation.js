@@ -55,9 +55,9 @@ function validateProjectQuery(query) {
 }
 
 function validateProjectById(params) {
-  const { id } = params;
+  const { projectId } = params;
 
-  if (!id || !isValidObjectId(id)) {
+  if (!projectId || !isValidObjectId(projectId)) {
     return "Project Id is required and must be a valid ObjectId";
   }
 

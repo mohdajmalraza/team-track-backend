@@ -11,6 +11,7 @@ const {
   addProject,
   getProjects,
   getProjectById,
+  getProjectTasks,
 } = require("./controllers/project.controller.js");
 const { addTeam, getTeams } = require("./controllers/team.controller.js");
 const { addTask, getTasks } = require("./controllers/task.controller.js");
@@ -21,27 +22,29 @@ initializeDatabase();
 
 app.use(
   cors({
-    origin: "https://team-track-project.vercel.app",
+    // origin: "https://team-track-project.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );
 app.use(express.json());
 
-app.post("/auth/signup", signupUser);
-app.post("/auth/login", loginUser);
-app.get("/auth/me", authMiddleware, getUserDetails);
+app.post("/api/auth/signup", signupUser);
+app.post("/api/auth/login", loginUser);
+app.get("/api/auth/me", authMiddleware, getUserDetails);
 
-app.get("/users", authMiddleware, getUsers);
+app.get("/api/users", authMiddleware, getUsers);
 
-app.post("/projects", authMiddleware, addProject);
-app.get("/projects", authMiddleware, getProjects);
-app.get("/api/projects/:id", authMiddleware, getProjectById);
+app.post("/api/projects", authMiddleware, addProject);
+app.get("/api/projects", authMiddleware, getProjects);
+app.get("/api/projects/:projectId/tasks", authMiddleware, getProjectTasks);
+app.get("/api/projects/:projectId", authMiddleware, getProjectById);
 
-app.post("/teams", authMiddleware, addTeam);
-app.get("/teams", authMiddleware, getTeams);
+app.post("/api/teams", authMiddleware, addTeam);
+app.get("/api/teams", authMiddleware, getTeams);
 
-app.post("/tasks", authMiddleware, addTask);
-app.get("/tasks", authMiddleware, getTasks);
+app.post("/api/tasks", authMiddleware, addTask);
+app.get("/api/tasks", authMiddleware, getTasks);
 
 app.get("/", (req, res) => {
   res.send({ status: "Ok", message: "TeamTrack backend is running." });

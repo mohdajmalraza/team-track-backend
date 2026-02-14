@@ -2,6 +2,7 @@ const {
   createProject,
   fetchProjects,
   fetchProjectById,
+  fetchProjectTasks,
 } = require("../services/project.service");
 const {
   validateProjectData,
@@ -85,9 +86,9 @@ const getProjectById = async (req, res) => {
   }
 
   try {
-    const { id } = req.params;
+    const { projectId } = req.params;
 
-    const project = await fetchProjectById(id);
+    const project = await fetchProjectById(projectId);
 
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
@@ -109,4 +110,60 @@ const getProjectById = async (req, res) => {
   }
 };
 
-module.exports = { addProject, getProjects, getProjectById };
+const getProjectTasks = async (req, res) => {
+  const validationError = validateProjectById(req.params);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { projectId } = req.params;
+
+    const tasks = await fetchProjectTasks(projectId);
+
+    if (!tasks.length) {
+      return res
+        .status(200)
+        .json({ message: "Tasks fetched successfully", tasks: [] });
+    }
+
+    const formattedTasks = tasks.map(
+      ({
+        _id,
+        name,
+        project,
+        team,
+        owners,
+        tags,
+        timeToComplete,
+        status,
+        dueDate,
+        updatedAt,
+      }) => ({
+        id: _id,
+        name,
+        project: project ? { id: project._id, name: project.name } : null,
+        team: team ? { id: team._id, name: team.name } : null,
+        owners: owners?.map(({ _id, name, email }) => ({
+          id: _id,
+          name,
+          email,
+        })),
+        tags,
+        dueDate,
+        timeToComplete,
+        status,
+        updatedAt,
+      }),
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Tasks fetched successfully", tasks: formattedTasks });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+module.exports = { addProject, getProjects, getProjectById, getProjectTasks };

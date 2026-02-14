@@ -1,4 +1,5 @@
 const Project = require("../models/project.model.js");
+const Task = require("../models/task.model.js");
 const { escapeRegex } = require("../utils/utility.js");
 
 async function createProject(data) {
@@ -34,4 +35,13 @@ async function fetchProjectById(id) {
   return await Project.findById(id);
 }
 
-module.exports = { createProject, fetchProjects, fetchProjectById };
+async function fetchProjectTasks(id) {
+  return await Task.find({ project: id });
+}
+
+module.exports = {
+  createProject,
+  fetchProjects,
+  fetchProjectById,
+  fetchProjectTasks,
+};
