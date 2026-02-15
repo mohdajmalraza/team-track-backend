@@ -3,6 +3,13 @@ const Task = require("../models/task.model.js");
 const Team = require("../models/team.model.js");
 const User = require("../models/user.model.js");
 
+const SORT_MAP = {
+  latest: { createdAt: -1 },
+  oldest: { createdAt: 1 },
+  dueSoon: { dueDate: 1 },
+  dueLate: { dueDate: -1 },
+};
+
 async function insertTask(data) {
   const { project, team, owners } = data;
 
@@ -37,7 +44,7 @@ async function insertTask(data) {
 
 async function findTasks(query) {
   const filters = {};
-  const { team, owner, tags, project, status } = query;
+  const { team, owner, tags, project, status, sort } = query;
 
   if (team) filters.team = team;
   if (project) filters.project = project;
@@ -49,11 +56,17 @@ async function findTasks(query) {
     filters.tags = { $in: tagArray };
   }
 
-  return await Task.find(filters)
+  let tasks = Task.find(filters)
     .populate("project", "name")
     .populate("team", "name")
     .populate("owners", "name email")
     .lean();
+
+  if (sort && SORT_MAP[sort]) {
+    tasks = tasks.sort(SORT_MAP[sort]);
+  }
+
+  return await tasks;
 }
 
 module.exports = { insertTask, findTasks };

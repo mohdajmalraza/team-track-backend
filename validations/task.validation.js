@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Project = require("../models/project.model.js");
 
 const ALLOWED_STATUSES = ["To Do", "In Progress", "Completed", "Blocked"];
+const ALLOWED_SORTS = ["latest", "oldest", "dueSoon", "dueLate"];
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -81,7 +82,7 @@ function validateTaskQuery(query) {
     return "Invalid query parameters";
   }
 
-  const { team, owner, tags, project, status } = query;
+  const { team, owner, tags, project, status, sort } = query;
 
   if (team && !isValidObjectId(team)) {
     return "Team must be a valid ID";
@@ -106,6 +107,10 @@ function validateTaskQuery(query) {
 
   if (tags && typeof tags !== "string") {
     return "Tags must be a comma-separated string";
+  }
+
+  if (sort && !ALLOWED_SORTS.includes(sort)) {
+    return `Sort must be one of ${ALLOWED_SORTS.join(", ")}`;
   }
 
   return null;

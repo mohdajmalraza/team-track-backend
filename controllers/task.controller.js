@@ -49,8 +49,8 @@ const createTask = async (req, res) => {
           name,
           email,
         })),
-        dueDate: task.dueDate,
         tags: task.tags,
+        dueDate: task.dueDate,
         timeToComplete: task.timeToComplete,
         status: task.status,
         updatedAt: task.updatedAt,
@@ -82,41 +82,30 @@ const getTasks = async (req, res) => {
       });
     }
 
-    const formattedTasks = tasks.map(
-      ({
-        _id,
-        name,
-        project,
-        team,
-        owners,
-        tags,
-        timeToComplete,
-        status,
-        dueDate,
-        updatedAt,
-      }) => ({
+    const formattedTasks = tasks.map((task) => ({
+      id: task._id,
+      name: task.name,
+      project: task.project
+        ? { id: task.project._id, name: task.project.name }
+        : null,
+      team: task.team ? { id: task.team._id, name: task.team.name } : null,
+      owners: task.owners?.map(({ _id, name, email }) => ({
         id: _id,
         name,
-        project: project ? { id: project._id, name: project.name } : null,
-        team: team ? { id: team._id, name: team.name } : null,
-        owners: owners?.map(({ _id, name, email }) => ({
-          id: _id,
-          name,
-          email,
-        })),
-        tags,
-        dueDate,
-        timeToComplete,
-        status,
-        updatedAt,
-      }),
-    );
+        email,
+      })),
+      tags: task.tags,
+      dueDate: task.dueDate,
+      timeToComplete: task.timeToComplete,
+      status: task.status,
+      updatedAt: task.updatedAt,
+    }));
 
     return res
       .status(200)
       .json({ message: "Tasks fetched successfully", tasks: formattedTasks });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
