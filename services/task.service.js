@@ -59,8 +59,7 @@ async function findTasks(query) {
   let tasks = Task.find(filters)
     .populate("project", "name")
     .populate("team", "name")
-    .populate("owners", "name email")
-    .lean();
+    .populate("owners", "name email");
 
   if (sort && SORT_MAP[sort]) {
     tasks = tasks.sort(SORT_MAP[sort]);
@@ -69,4 +68,38 @@ async function findTasks(query) {
   return await tasks;
 }
 
-module.exports = { insertTask, findTasks };
+async function findTaskById(id) {
+  return await Task.findById(id)
+    .populate("project", "name")
+    .populate("team", "name")
+    .populate("owners", "name email");
+}
+
+async function updateTaskStatusById(taskId, newStatus) {
+  const task = await Task.findById(taskId)
+    .populate("project", "name")
+    .populate("team", "name")
+    .populate("owners", "name email");
+
+  if (!task) {
+    return null;
+  }
+
+  const allowedTransitions = {
+    "To Do": ["In Progress", "Blocked"],
+    "In Progress": ["Completed", "Blocked"],
+    Blocked: ["In Progress"],
+    Completed: ["In Progress"], // Allow restart
+  };
+
+  if (!allowedTransitions[task.status]?.includes(newStatus)) {
+    throw new Error(`Cannot change status from ${task.status} to ${newStatus}`);
+  }
+
+  task.status = newStatus;
+  await task.save();
+
+  return task;
+}
+
+module.exports = { insertTask, findTasks, findTaskById, updateTaskStatusById };

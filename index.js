@@ -13,7 +13,12 @@ const {
   getProjectById,
 } = require("./controllers/project.controller.js");
 const { createTeam, getTeams } = require("./controllers/team.controller.js");
-const { createTask, getTasks } = require("./controllers/task.controller.js");
+const {
+  createTask,
+  getTasks,
+  getTaskById,
+  updateTaskStatus,
+} = require("./controllers/task.controller.js");
 const { getUsers } = require("./controllers/user.controller.js");
 
 const app = express();
@@ -42,6 +47,8 @@ app.get("/api/teams", authMiddleware, getTeams);
 
 app.post("/api/tasks", authMiddleware, createTask);
 app.get("/api/tasks", authMiddleware, getTasks);
+app.get("/api/tasks/:taskId", authMiddleware, getTaskById);
+app.patch("/api/tasks/:taskId/status", authMiddleware, updateTaskStatus);
 
 app.get("/", (req, res) => {
   res.send({ status: "Ok", message: "TeamTrack backend is running." });

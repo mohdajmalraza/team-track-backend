@@ -54,7 +54,7 @@ function validateProjectQuery(query) {
   return null;
 }
 
-function validateProjectById(params) {
+function validateProjectIdParam(params) {
   const { projectId } = params;
 
   if (!projectId || !isValidObjectId(projectId)) {
@@ -67,5 +67,5 @@ function validateProjectById(params) {
 module.exports = {
   validateProjectData,
   validateProjectQuery,
-  validateProjectById,
+  validateProjectIdParam,
 };

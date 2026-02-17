@@ -6,7 +6,7 @@ const {
 const {
   validateProjectData,
   validateProjectQuery,
-  validateProjectById,
+  validateProjectIdParam,
 } = require("../validations/project.validation");
 
 const createProject = async (req, res) => {
@@ -79,7 +79,7 @@ const getProjects = async (req, res) => {
 };
 
 const getProjectById = async (req, res) => {
-  const validationError = validateProjectById(req.params);
+  const validationError = validateProjectIdParam(req.params);
   if (validationError) {
     return res.status(400).json({ error: validationError });
   }

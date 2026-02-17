@@ -3,6 +3,7 @@ const Project = require("../models/project.model.js");
 
 const ALLOWED_STATUSES = ["To Do", "In Progress", "Completed", "Blocked"];
 const ALLOWED_SORTS = ["latest", "oldest", "dueSoon", "dueLate"];
+const ALLOWED_PRIORITIES = ["High", "Medium", "Low"];
 
 function isValidObjectId(id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -17,8 +18,17 @@ function validateTaskData(body) {
     return "Request body is required";
   }
 
-  const { name, project, team, owners, tags, timeToComplete, status, dueDate } =
-    body;
+  const {
+    name,
+    project,
+    team,
+    owners,
+    tags,
+    timeToComplete,
+    priority,
+    status,
+    dueDate,
+  } = body;
 
   if (!name || typeof name !== "string") {
     return "Name is required and must be a string";
@@ -67,11 +77,12 @@ function validateTaskData(body) {
     return "Time to complete is required and must be a positive number";
   }
 
-  if (
-    status &&
-    !["To Do", "In Progress", "Completed", "Blocked"].includes(status)
-  ) {
-    return 'Status must be one of ["To Do", "In Progress", "Completed", "Blocked"]';
+  if (status && !ALLOWED_STATUSES.includes(status)) {
+    return `Status must be one of ${ALLOWED_STATUSES.join(", ")}`;
+  }
+
+  if (priority && !ALLOWED_PRIORITIES.includes(priority)) {
+    return `Priority must be one of ${ALLOWED_PRIORITIES.join(", ")}`;
   }
 
   return null;
@@ -116,4 +127,34 @@ function validateTaskQuery(query) {
   return null;
 }
 
-module.exports = { validateTaskData, validateTaskQuery };
+function validateTaskIdParam(params) {
+  const { taskId } = params;
+
+  if (!taskId || !isValidObjectId(taskId)) {
+    return "Task Id is required and must be a valid ObjectId";
+  }
+
+  return null;
+}
+
+function validateUpdateTaskStatus(params, body) {
+  const { taskId } = params;
+  const { status } = body;
+
+  if (!taskId || !isValidObjectId(taskId)) {
+    return "Valid taskId is required";
+  }
+
+  if (!status || !ALLOWED_STATUSES.includes(status)) {
+    return `Status must be one of ${ALLOWED_STATUSES.join(", ")}`;
+  }
+
+  return null;
+}
+
+module.exports = {
+  validateTaskData,
+  validateTaskQuery,
+  validateTaskIdParam,
+  validateUpdateTaskStatus,
+};
