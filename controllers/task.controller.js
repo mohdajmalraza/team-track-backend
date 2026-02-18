@@ -25,8 +25,9 @@ const createTask = async (req, res) => {
       owners,
       tags,
       timeToComplete,
-      dueDate,
       status,
+      priority,
+      dueDate,
     } = req.body;
 
     const parsedDueDate = new Date(dueDate);
