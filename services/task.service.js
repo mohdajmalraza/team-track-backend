@@ -76,10 +76,7 @@ async function findTaskById(id) {
 }
 
 async function updateTaskStatusById(taskId, newStatus) {
-  const task = await Task.findById(taskId)
-    .populate("project", "name")
-    .populate("team", "name")
-    .populate("owners", "name email");
+  const task = await Task.findById(taskId);
 
   if (!task) {
     return null;
@@ -99,7 +96,31 @@ async function updateTaskStatusById(taskId, newStatus) {
   task.status = newStatus;
   await task.save();
 
-  return task;
+  return await task.populate([
+    { path: "project", select: "name" },
+    { path: "team", select: "name" },
+    { path: "owners", select: "name email" },
+  ]);
 }
 
-module.exports = { insertTask, findTasks, findTaskById, updateTaskStatusById };
+async function updateTaskById(taskId, data) {
+  if (data.status !== undefined) {
+    throw new Error("Status must be updated using status endpoint");
+  }
+
+  return await Task.findByIdAndUpdate(taskId, data, {
+    new: true,
+    runValidators: true,
+  })
+    .populate("project", "name")
+    .populate("team", "name")
+    .populate("owners", "name email");
+}
+
+module.exports = {
+  insertTask,
+  findTasks,
+  findTaskById,
+  updateTaskStatusById,
+  updateTaskById,
+};

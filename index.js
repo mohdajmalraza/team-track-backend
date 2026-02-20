@@ -18,6 +18,7 @@ const {
   getTasks,
   getTaskById,
   updateTaskStatus,
+  updateTask,
 } = require("./controllers/task.controller.js");
 const { getUsers } = require("./controllers/user.controller.js");
 
@@ -50,6 +51,7 @@ app.post("/api/tasks", authMiddleware, createTask);
 app.get("/api/tasks", authMiddleware, getTasks);
 app.get("/api/tasks/:taskId", authMiddleware, getTaskById);
 app.patch("/api/tasks/:taskId/status", authMiddleware, updateTaskStatus);
+app.patch("/api/tasks/:taskId", authMiddleware, updateTask);
 
 app.get("/", (req, res) => {
   res.send({ status: "Ok", message: "TeamTrack backend is running." });

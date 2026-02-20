@@ -152,9 +152,93 @@ function validateUpdateTaskStatus(params, body) {
   return null;
 }
 
+function validateUpdateTask(params, body) {
+  if (!body || typeof body !== "object" || Object.keys(body).length === 0) {
+    return "At least one field must be provided for update";
+  }
+
+  const { taskId } = params;
+
+  if (!taskId || !isValidObjectId(taskId)) {
+    return "Valid taskId is required";
+  }
+
+  const {
+    name,
+    project,
+    team,
+    owners,
+    tags,
+    timeToComplete,
+    priority,
+    status,
+    dueDate,
+  } = body;
+
+  if (status !== undefined) {
+    return "Task status must be updated using the status endpoint";
+  }
+
+  if (name !== undefined && typeof name !== "string") {
+    return "Name must be a string";
+  }
+
+  if (project !== undefined && !isValidObjectId(project)) {
+    return "ProjectID must be valid";
+  }
+
+  if (team !== undefined && !isValidObjectId(team)) {
+    return "TeamID must be valid";
+  }
+
+  if (dueDate !== undefined) {
+    const parsedDate = new Date(dueDate);
+    if (isNaN(parsedDate.getTime())) {
+      return "Due date must be a valid date";
+    }
+  }
+
+  if (owners !== undefined) {
+    if (!Array.isArray(owners) || owners.length === 0) {
+      return "Owners must be a non-empty array";
+    }
+
+    for (const ownerId of owners) {
+      if (!isValidObjectId(ownerId)) {
+        return "Each owner ID must be valid";
+      }
+    }
+  }
+
+  if (tags !== undefined) {
+    if (!Array.isArray(tags)) {
+      return "Tags must be an array";
+    }
+
+    for (const tag of tags) {
+      if (typeof tag !== "string") {
+        return "Each tag must be a string";
+      }
+    }
+  }
+
+  if (timeToComplete !== undefined) {
+    if (typeof timeToComplete !== "number" || timeToComplete <= 0) {
+      return "Time to complete must be a positive number";
+    }
+  }
+
+  if (priority !== undefined && !ALLOWED_PRIORITIES.includes(priority)) {
+    return `Priority must be one of ${ALLOWED_PRIORITIES.join(", ")}`;
+  }
+
+  return null;
+}
+
 module.exports = {
   validateTaskData,
   validateTaskQuery,
   validateTaskIdParam,
   validateUpdateTaskStatus,
+  validateUpdateTask,
 };

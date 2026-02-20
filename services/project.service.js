@@ -1,5 +1,5 @@
 const Project = require("../models/project.model.js");
-const { escapeRegex } = require("../utils/utility.js");
+const { escapeRegex } = require("../utils/regex.util.js");
 
 async function insertProject(data) {
   return await Project.create(data);

@@ -3,12 +3,14 @@ const {
   findTasks,
   findTaskById,
   updateTaskStatusById,
+  updateTaskById,
 } = require("../services/task.service");
 const {
   validateTaskData,
   validateTaskQuery,
   validateTaskIdParam,
   validateUpdateTaskStatus,
+  validateUpdateTask,
 } = require("../validations/task.validation");
 
 const createTask = async (req, res) => {
@@ -46,25 +48,7 @@ const createTask = async (req, res) => {
 
     return res.status(201).json({
       message: "Task created successfully",
-      task: {
-        id: task._id,
-        name: task.name,
-        project: task.project
-          ? { id: task.project._id, name: task.project.name }
-          : null,
-        team: task.team ? { id: task.team._id, name: task.team.name } : null,
-        owners: task.owners?.map(({ _id, name, email }) => ({
-          id: _id,
-          name,
-          email,
-        })),
-        tags: task.tags,
-        dueDate: task.dueDate,
-        timeToComplete: task.timeToComplete,
-        status: task.status,
-        priority: task.priority,
-        updatedAt: task.updatedAt,
-      },
+      task: formatTask(task),
     });
   } catch (error) {
     if (error.statusCode) {
@@ -92,25 +76,7 @@ const getTasks = async (req, res) => {
       });
     }
 
-    const formattedTasks = tasks.map((task) => ({
-      id: task._id,
-      name: task.name,
-      project: task.project
-        ? { id: task.project._id, name: task.project.name }
-        : null,
-      team: task.team ? { id: task.team._id, name: task.team.name } : null,
-      owners: task.owners?.map(({ _id, name, email }) => ({
-        id: _id,
-        name,
-        email,
-      })),
-      tags: task.tags,
-      dueDate: task.dueDate,
-      timeToComplete: task.timeToComplete,
-      status: task.status,
-      priority: task.priority,
-      updatedAt: task.updatedAt,
-    }));
+    const formattedTasks = tasks.map((task) => formatTask(task));
 
     return res
       .status(200)
@@ -138,25 +104,7 @@ const getTaskById = async (req, res) => {
 
     return res.status(200).json({
       message: "Task found successfully",
-      task: {
-        id: task._id,
-        name: task.name,
-        project: task.project
-          ? { id: task.project._id, name: task.project.name }
-          : null,
-        team: task.team ? { id: task.team._id, name: task.team.name } : null,
-        owners: task.owners?.map(({ _id, name, email }) => ({
-          id: _id,
-          name,
-          email,
-        })),
-        tags: task.tags,
-        dueDate: task.dueDate,
-        timeToComplete: task.timeToComplete,
-        status: task.status,
-        priority: task.priority,
-        updatedAt: task.updatedAt,
-      },
+      task: formatTask(task),
     });
   } catch (error) {
     console.log(error);
@@ -182,27 +130,7 @@ const updateTaskStatus = async (req, res) => {
 
     return res.status(200).json({
       message: `Task moved to ${updatedTask.status} successfully`,
-      task: {
-        id: updatedTask._id,
-        name: updatedTask.name,
-        project: updatedTask.project
-          ? { id: updatedTask.project._id, name: updatedTask.project.name }
-          : null,
-        team: updatedTask.team
-          ? { id: updatedTask.team._id, name: updatedTask.team.name }
-          : null,
-        owners: updatedTask.owners?.map(({ _id, name, email }) => ({
-          id: _id,
-          name,
-          email,
-        })),
-        tags: updatedTask.tags,
-        dueDate: updatedTask.dueDate,
-        timeToComplete: updatedTask.timeToComplete,
-        status: updatedTask.status,
-        priority: updatedTask.priority,
-        updatedAt: updatedTask.updatedAt,
-      },
+      task: formatTask(updatedTask),
     });
   } catch (error) {
     console.log(error);
@@ -210,4 +138,35 @@ const updateTaskStatus = async (req, res) => {
   }
 };
 
-module.exports = { createTask, getTasks, getTaskById, updateTaskStatus };
+const updateTask = async (req, res) => {
+  const validationError = validateUpdateTask(req.params, req.body);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { taskId } = req.params;
+
+    const updatedTask = await updateTaskById(taskId, req.body);
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    return res.status(200).json({
+      message: "Task updated successfully",
+      task: formatTask(updatedTask),
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  createTask,
+  getTasks,
+  getTaskById,
+  updateTaskStatus,
+  updateTask,
+};
