@@ -34,8 +34,13 @@ async function findProjectById(id) {
   return await Project.findById(id);
 }
 
+async function updateProjectById(id, data) {
+  return await Project.findByIdAndUpdate(id, data, { new: true });
+}
+
 module.exports = {
   insertProject,
   findProjects,
   findProjectById,
+  updateProjectById,
 };

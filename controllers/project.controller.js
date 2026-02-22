@@ -2,11 +2,13 @@ const {
   insertProject,
   findProjects,
   findProjectById,
+  updateProjectById,
 } = require("../services/project.service");
 const {
   validateProjectData,
   validateProjectQuery,
   validateProjectIdParam,
+  validateUpdateProject,
 } = require("../validations/project.validation");
 
 const createProject = async (req, res) => {
@@ -109,4 +111,40 @@ const getProjectById = async (req, res) => {
   }
 };
 
-module.exports = { createProject, getProjects, getProjectById };
+const updateProject = async (req, res) => {
+  const validationError = validateUpdateProject(req.params, req.body);
+
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { projectId } = req.params;
+    const { name, description } = req.body;
+
+    const updatedProject = await updateProjectById(projectId, {
+      name,
+      description,
+    });
+
+    if (!updatedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    return res.status(200).json({
+      message: "Project updated successfully",
+      project: {
+        id: updatedProject._id,
+        name: updatedProject.name,
+        description: updatedProject.description,
+        status: updatedProject.status,
+        createdAt: updatedProject.createdAt,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { createProject, getProjects, getProjectById, updateProject };

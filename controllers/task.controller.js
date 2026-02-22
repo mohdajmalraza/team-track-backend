@@ -12,6 +12,7 @@ const {
   validateUpdateTaskStatus,
   validateUpdateTask,
 } = require("../validations/task.validation");
+const { formatTask } = require("../mappers/task.mapper.js");
 
 const createTask = async (req, res) => {
   const validationError = validateTaskData(req.body);

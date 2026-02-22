@@ -64,8 +64,37 @@ function validateProjectIdParam(params) {
   return null;
 }
 
+function validateUpdateProject(params, body) {
+  if (!body || typeof body !== "object" || Object.keys(body) === 0) {
+    return "At least one field must be provided for update";
+  }
+
+  const { projectId } = params;
+
+  if (!projectId || !isValidObjectId(projectId)) {
+    return "Valid projectId is required";
+  }
+
+  const { name, description } = body;
+
+  if (name !== undefined) {
+    if (typeof name !== "string" || name.trim() === "") {
+      return "Name must be a non-empty string";
+    }
+  }
+
+  if (description !== undefined) {
+    if (typeof description !== "string" || description.trim() === "") {
+      return "Description must be a non-empty string";
+    }
+  }
+
+  return null;
+}
+
 module.exports = {
   validateProjectData,
   validateProjectQuery,
   validateProjectIdParam,
+  validateUpdateProject,
 };
