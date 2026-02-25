@@ -4,10 +4,11 @@ const Team = require("../models/team.model.js");
 const User = require("../models/user.model.js");
 
 const SORT_MAP = {
-  latest: { createdAt: -1 },
-  oldest: { createdAt: 1 },
-  dueSoon: { dueDate: 1 },
-  dueLate: { dueDate: -1 },
+  dueDate_asc: { dueDate: 1 },
+  dueDate_desc: { dueDate: -1 },
+
+  priority_desc: { priorityLevel: 1 }, // High → Low
+  priority_asc: { priorityLevel: -1 }, // Low → High
 };
 
 async function insertTask(data) {

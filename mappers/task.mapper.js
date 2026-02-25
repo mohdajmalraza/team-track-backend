@@ -16,6 +16,7 @@ function formatTask(task) {
     timeToComplete: task.timeToComplete,
     status: task.status,
     priority: task.priority,
+    createdAt: task.createdAt,
     updatedAt: task.updatedAt,
   };
 }

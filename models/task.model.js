@@ -74,18 +74,15 @@ taskSchema.pre("save", function () {
   if (this.isModified("priority")) {
     this.priorityLevel = PRIORITY_MAP[this.priority];
   }
-
-  // next();
 });
 
-// taskSchema.pre("findOneAndUpdate", function (next) {
-//   const update = this.getUpdate();
+// Automatically update the `priorityLevel` field whenever the document is updated using findOneANdUpdate
+taskSchema.pre("findOneAndUpdate", function () {
+  const update = this.getUpdate();
 
-//   if (update.priority) {
-//     update.priorityLevel = PRIORITY_MAP[update.priority];
-//   }
-
-//   next();
-// });
+  if (update.priority) {
+    update.priorityLevel = PRIORITY_MAP[update.priority];
+  }
+});
 
 module.exports = mongoose.model("Task", taskSchema);

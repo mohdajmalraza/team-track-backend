@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 const Project = require("../models/project.model.js");
 
 const ALLOWED_STATUSES = ["To Do", "In Progress", "Completed", "Blocked"];
-const ALLOWED_SORTS = ["latest", "oldest", "dueSoon", "dueLate"];
+const ALLOWED_SORTS = [
+  "dueDate_asc",
+  "dueDate_desc",
+  "priority_desc",
+  "priority_asc",
+];
 const ALLOWED_PRIORITIES = ["High", "Medium", "Low"];
 
 function isValidObjectId(id) {
