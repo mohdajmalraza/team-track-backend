@@ -8,16 +8,23 @@ const createTeam = async (req, res) => {
   }
 
   try {
-    const { name, description } = req.body;
+    const { name, members, description } = req.body;
 
-    const team = await insertTeam({ name, description });
+    const team = await insertTeam({
+      name,
+      description,
+      members,
+      createdBy: req.user.id,
+    });
 
     return res.status(201).json({
       message: "Team created successfully",
       team: {
         id: team._id,
         name: team.name,
+        members: team?.members || [],
         description: team.description,
+        createdBy: team.createdBy.name,
       },
     });
   } catch (error) {
@@ -48,6 +55,8 @@ const getTeams = async (req, res) => {
     const formattedTeams = teams.map((team) => ({
       id: team._id,
       name: team.name,
+      members: team?.members || [],
+      createdBy: team.createdBy.name,
       description: team.description,
     }));
 

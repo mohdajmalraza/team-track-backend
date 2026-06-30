@@ -28,7 +28,8 @@ initializeDatabase();
 
 app.use(
   cors({
-    origin: "https://team-track-project.vercel.app",
+    // origin: "https://team-track-project.vercel.app",
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );

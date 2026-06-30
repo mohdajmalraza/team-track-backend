@@ -45,7 +45,7 @@ async function insertTask(data) {
 
 async function findTasks(query) {
   const filters = {};
-  const { team, owner, tags, project, status, sort } = query;
+  const { team, owner, tags, project, status, sort = "dueDate_asc" } = query;
 
   if (team) filters.team = team;
   if (project) filters.project = project;
