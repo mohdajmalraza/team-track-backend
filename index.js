@@ -13,7 +13,11 @@ const {
   getProjectById,
   updateProject,
 } = require("./controllers/project.controller.js");
-const { createTeam, getTeams } = require("./controllers/team.controller.js");
+const {
+  createTeam,
+  getTeams,
+  getTeamById,
+} = require("./controllers/team.controller.js");
 const {
   createTask,
   getTasks,
@@ -28,8 +32,8 @@ initializeDatabase();
 
 app.use(
   cors({
-    // origin: "https://team-track-project.vercel.app",
-    origin: "http://localhost:5173",
+    origin: "https://team-track-project.vercel.app",
+
     credentials: true,
   }),
 );
@@ -48,6 +52,7 @@ app.patch("/api/projects/:projectId", authMiddleware, updateProject);
 
 app.post("/api/teams", authMiddleware, createTeam);
 app.get("/api/teams", authMiddleware, getTeams);
+app.get("/api/teams/:teamId", authMiddleware, getTeamById);
 
 app.post("/api/tasks", authMiddleware, createTask);
 app.get("/api/tasks", authMiddleware, getTasks);

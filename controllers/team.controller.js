@@ -1,5 +1,13 @@
-const { insertTeam, findTeams } = require("../services/team.service");
-const { validateTeamData } = require("../validations/team.validation.js");
+const { formatTeam } = require("../mappers/team.mapper.js");
+const {
+  insertTeam,
+  findTeams,
+  findTeamById,
+} = require("../services/team.service");
+const {
+  validateTeamData,
+  validateTeamIdParam,
+} = require("../validations/team.validation.js");
 
 const createTeam = async (req, res) => {
   const validationError = validateTeamData(req.body);
@@ -19,13 +27,7 @@ const createTeam = async (req, res) => {
 
     return res.status(201).json({
       message: "Team created successfully",
-      team: {
-        id: team._id,
-        name: team.name,
-        members: team?.members || [],
-        description: team.description,
-        createdBy: team.createdBy.name,
-      },
+      team: formatTeam(team),
     });
   } catch (error) {
     console.log(error.message);
@@ -52,13 +54,7 @@ const getTeams = async (req, res) => {
       });
     }
 
-    const formattedTeams = teams.map((team) => ({
-      id: team._id,
-      name: team.name,
-      members: team?.members || [],
-      createdBy: team.createdBy.name,
-      description: team.description,
-    }));
+    const formattedTeams = teams.map((team) => formatTeam(team));
 
     return res
       .status(200)
@@ -69,4 +65,29 @@ const getTeams = async (req, res) => {
   }
 };
 
-module.exports = { createTeam, getTeams };
+const getTeamById = async (req, res) => {
+  const validationError = validateTeamIdParam(req.params);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  try {
+    const { teamId } = req.params;
+
+    const team = await findTeamById(teamId);
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    return res.status(200).json({
+      message: "Team found successfully",
+      team: formatTeam(team),
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { createTeam, getTeams, getTeamById };
