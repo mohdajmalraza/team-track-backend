@@ -26,6 +26,11 @@ const {
   updateTask,
 } = require("./controllers/task.controller.js");
 const { getUsers } = require("./controllers/user.controller.js");
+const {
+  getReportLastWeek,
+  getReportPending,
+  getReportClosedTasks,
+} = require("./controllers/report.controller.js");
 
 const app = express();
 initializeDatabase();
@@ -33,7 +38,6 @@ initializeDatabase();
 app.use(
   cors({
     origin: "https://team-track-project.vercel.app",
-
     credentials: true,
   }),
 );
@@ -59,6 +63,10 @@ app.get("/api/tasks", authMiddleware, getTasks);
 app.get("/api/tasks/:taskId", authMiddleware, getTaskById);
 app.patch("/api/tasks/:taskId/status", authMiddleware, updateTaskStatus);
 app.patch("/api/tasks/:taskId", authMiddleware, updateTask);
+
+app.get("/api/report/last-week", authMiddleware, getReportLastWeek);
+app.get("/api/report/pending", authMiddleware, getReportPending);
+app.get("/api/report/closed-tasks", authMiddleware, getReportClosedTasks);
 
 app.get("/", (req, res) => {
   res.send({ status: "Ok", message: "TeamTrack backend is running." });
