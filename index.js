@@ -25,7 +25,12 @@ const {
   updateTaskStatus,
   updateTask,
 } = require("./controllers/task.controller.js");
-const { getUsers } = require("./controllers/user.controller.js");
+const {
+  getUsers,
+  updateUserProfile,
+  changePassword,
+  accountSummary,
+} = require("./controllers/user.controller.js");
 const {
   getReportLastWeek,
   getReportPending,
@@ -48,6 +53,9 @@ app.post("/api/auth/login", loginUser);
 app.get("/api/auth/me", authMiddleware, getUserDetails);
 
 app.get("/api/users", authMiddleware, getUsers);
+app.patch("/api/users/profile", authMiddleware, updateUserProfile);
+app.patch("/api/users/change-password", authMiddleware, changePassword);
+app.get("/api/users/account-summary", authMiddleware, accountSummary);
 
 app.post("/api/projects", authMiddleware, createProject);
 app.get("/api/projects", authMiddleware, getProjects);

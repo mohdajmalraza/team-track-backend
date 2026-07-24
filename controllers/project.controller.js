@@ -20,7 +20,12 @@ const createProject = async (req, res) => {
   try {
     const { name, description, status } = req.body;
 
-    const project = await insertProject({ name, description, status });
+    const project = await insertProject({
+      name,
+      description,
+      status,
+      createdBy: req.user.id,
+    });
 
     return res.status(201).json({
       message: "Project created successfully",

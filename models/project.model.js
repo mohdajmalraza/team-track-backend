@@ -16,6 +16,11 @@ const projectSchema = new mongoose.Schema(
       enum: ["In Progress", "Completed"], // Enum for project status
       default: "In Progress",
     }, // Project status
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     // createdAt: {
     //   type: Date,
     //   default: Date.now,
