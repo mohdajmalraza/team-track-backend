@@ -4,6 +4,12 @@ A RESTful backend API for **TeamTrack**, a team and task management application.
 
 ---
 
+## 🌐 Live API
+
+🔗 [Backend Base URL](https://team-track-backend-eac27.vercel.app/)
+
+---
+
 ## 🚀 Features
 
 ### Authentication
@@ -227,17 +233,6 @@ The backend generates:
 
 ---
 
-## 🌐 Deployment
-
-The backend can be deployed on platforms like:
-
-- Render
-- Railway
-- VPS
-- AWS EC2
-
----
-
 ## 📚 What I Learned
 
 During this project, I learned how to:
@@ -257,3 +252,5 @@ During this project, I learned how to:
 ## 👨‍💻 Author
 
 **Mohd Ajmal Raza**
+
+📧 **[ajmalbly27@gmail.com](mailto:ajmalbly27@gmail.com)**
